@@ -1,0 +1,80 @@
+version: "3.8"
+services:
+  apache:
+    image: "bitnami/apache:latest"
+    networks:
+      avature-jobs-network:
+        aliases:
+          - apache
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - ./vhost_httpd.conf:/vhosts/vhost.conf:ro
+  jobs-service:
+    build:
+      context: ./jobs-service
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 3000
+    networks:
+      avature-jobs-network:
+        aliases:
+          - jobs-service
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+  jobber-wocky-integration-service:
+    build:
+      context: ./jobberWocky-integration-service
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 3000
+    networks:
+      avature-jobs-network:
+        aliases:
+          - jobberWocky-integration-service
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+  notifications-service:
+    build:
+      context: ./notifications-service
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 3000
+    networks:
+      avature-jobs-network:
+        aliases:
+          - notifications-service
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+  redis:
+    image: "bitnami/redis:latest"
+    environment:
+      - REDIS_PASSWORD=mauricio
+      - REDIS_PORT_NUMBER=7000
+      - REDIS_AOF_ENABLED=no
+    command: /opt/bitnami/scripts/redis/run.sh --maxmemory 50mb
+    ports:
+      - "7000:7000"
+    networks:
+      avature-jobs-network:
+        aliases:
+          - redis-service
+networks:
+  avature-jobs-network:
+    driver: bridge

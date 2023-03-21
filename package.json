@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "aws-sdk": "^2.1339.0"
+  }
+}
