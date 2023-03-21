@@ -10,8 +10,8 @@ export class JobsRepository {
   constructor(@Inject('notifications-service') private readonly notificationService: ClientProxy) {}
   async saveJob(job) {
     try {
-      await Jobs.save(job);
-      return { status: httpCodes.created201, response: jobsSeed[jobsSeed.length - 1] };
+    const save =  await Jobs.save(job);
+      return save;
     } catch (error) {
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
     }

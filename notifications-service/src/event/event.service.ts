@@ -10,10 +10,8 @@ export class EventService {
       const message = await this.eventRepository.subscribeMessage();
 
       Logger.log({ message }, { viewer: '----------------------------' });
-      console.log({ message }, { viewer: '----------------------------' });
       if (message) return message;
     } catch (error) {
-      console.log({ error });
       Logger.error({ error });
       throw new HttpException(error, error?.response?.statusCode || 500);
     }

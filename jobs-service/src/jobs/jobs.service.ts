@@ -19,10 +19,8 @@ export class JobsService {
       const id = String(Date.now() / 1000);
       await this.redisRepository.setData(id, job);
       const result = await this.redisRepository.getData(id);
-      // console.log({ id, job });
-      console.log({ result: JSON.parse(result) });
-
-      return { savedJob, status: httpCodes.created201, result: JSON.parse(result) };
+     
+      return { status: httpCodes.created201, data: savedJob };
     } catch (error) {
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
     }

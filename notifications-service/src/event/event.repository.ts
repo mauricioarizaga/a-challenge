@@ -51,8 +51,6 @@ export class EventRepository {
         return arrayMessages;
       }); */
       const id = crypto.randomUUID();
-      console.log(arrayMessages);
-      console.log(id);
       if (arrayMessages.length > 0) {
         await this.redisRepository.setData(id, arrayMessages);
         return id;
