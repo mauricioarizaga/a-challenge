@@ -2,7 +2,6 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, timeout } from 'rxjs/operators';
 import { httpCodes } from '../constants/responseCodes';
-import { jobsSeed } from '../seeds/db';
 import { Jobs } from './entity';
 
 @Injectable()
@@ -10,13 +9,21 @@ export class JobsRepository {
   constructor(@Inject('notifications-service') private readonly notificationService: ClientProxy) {}
   async saveJob(job) {
     try {
-    const save =  await Jobs.save(job);
+      const save = await Jobs.save(job);
       return save;
     } catch (error) {
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
     }
   }
-
+  async findJob(queryData) {
+    try {
+      console.log({ query: queryData });
+      return await Jobs.find(queryData);
+    } catch (error) {
+      console.log({ error });
+      throw new HttpException(error, error?.statusCode || httpCodes.error500);
+    }
+  }
   async connectUserService(pattern: string, data, msResponse: number) {
     const resultConnection = this.notificationService
       .send(pattern, data)

@@ -1,4 +1,7 @@
 import { Body, Controller, Get, HttpException, Inject, Logger, Post } from '@nestjs/common';
+import { MessagePattern, RpcException } from '@nestjs/microservices';
+import { RPC } from '../constants/rpc';
+import { Rpc } from '../decorators/rpc.decorator';
 import { AppService } from '../nestConfig/app.service';
 import { JobDTO } from './dto/job.dto';
 import { JobsService } from './jobs.service';
@@ -18,6 +21,16 @@ export class JobsController {
       return await this.jobsService.saveJob(job);
     } catch (error) {
       throw new HttpException(error, error?.response?.statusCode || 500);
+    }
+  }
+  @Rpc()
+  @MessagePattern(RPC.GET_NEW_POST_JOB)
+  async getNewJob(payload): Promise<any> {
+    try {
+      console.log({ payload, pay: payload.where });
+      return await this.jobsService.getJobs(payload);
+    } catch (error) {
+      throw new RpcException(error);
     }
   }
   @Get('health')

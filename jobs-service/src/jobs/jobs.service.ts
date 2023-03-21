@@ -16,10 +16,7 @@ export class JobsService {
         error: false,
       });
       const savedJob = await this.jobsRepository.saveJob(job);
-      const id = String(Date.now() / 1000);
-      await this.redisRepository.setData(id, job);
-      const result = await this.redisRepository.getData(id);
-     
+
       return { status: httpCodes.created201, data: savedJob };
     } catch (error) {
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
@@ -27,5 +24,13 @@ export class JobsService {
   }
   async sentNotificationUser(savedJob: JobDTO) {
     return await this.jobsRepository.connectUserService(RPC.NEW_JOB_POST, savedJob, 10000);
+  }
+  async getJobs(queryData) {
+    try {
+      console.log({ queryData });
+      return await this.jobsRepository.findJob(queryData);
+    } catch (error) {
+      throw new HttpException(error, error?.statusCode || httpCodes.error500);
+    }
   }
 }
