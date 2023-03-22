@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JobberWockyRepository {
@@ -8,10 +8,9 @@ export class JobberWockyRepository {
 
   async findJobsByParams(url: string) {
     try {
-      const response = await lastValueFrom(this.axiosRequest.get(url));
+      const response = await firstValueFrom(this.axiosRequest.get(url));
       return response;
     } catch (error) {
-      console.log(error?.response?.data);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
