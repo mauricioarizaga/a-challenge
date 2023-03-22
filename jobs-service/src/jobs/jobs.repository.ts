@@ -13,14 +13,28 @@ export class JobsRepository {
       const save = await Jobs.save(job);
       return save;
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || httpCodes.error500);
+       throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     }
   }
   async findJob(findArgs: FindManyOptions<Jobs>) {
     try {
       return await Jobs.find(findArgs);
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || httpCodes.error500);
+       throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     }
   }
   async connectUserService(pattern: string, data, msResponse: number) {

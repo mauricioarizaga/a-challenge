@@ -17,7 +17,14 @@ export class JobsService {
       const savedJob = await this.jobsRepository.saveJob(job);
       return { status: httpCodes.created201, data: savedJob };
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || httpCodes.error500);
+       throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     }
   }
   async sentNotificationUser(savedJob: JobDTO) {

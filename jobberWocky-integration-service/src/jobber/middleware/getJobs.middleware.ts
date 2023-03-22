@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  NestMiddleware,
-} from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NestMiddleware } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { JobDTO } from '../dto/job.dto';
+import { SearchJobDTO } from '../dto/job.dto';
 
 @Injectable()
 export class getJobsMiddleware implements NestMiddleware {
@@ -14,7 +9,7 @@ export class getJobsMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     try {
-      const body = new JobDTO();
+      /*  const body = new JobDTO();
       const { name, salary, country, skills } = req.body;
       body.name = name;
       body.salary = salary;
@@ -22,12 +17,9 @@ export class getJobsMiddleware implements NestMiddleware {
       body.skills = skills;
       const errors = await validate(body);
       if (errors.length > 0) throw new BadRequestException(errors);
-      next();
+      */ next();
     } catch (error) {
-      throw new HttpException(
-        error?.response?.message,
-        error?.response?.statusCode || 500,
-      );
+      throw new HttpException(error?.response?.message, error?.response?.statusCode || 500);
     }
   }
 }

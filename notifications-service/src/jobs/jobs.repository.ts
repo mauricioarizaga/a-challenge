@@ -10,7 +10,14 @@ export class JobsRepository {
     try {
       return await Jobs.find(findArgs);
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || httpCodes.error500);
+       throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     }
   }
 }
