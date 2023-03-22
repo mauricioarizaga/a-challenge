@@ -19,15 +19,6 @@ export class NotificationController {
       throw new HttpException(error, error?.statusCode || 500);
     }
   }
-  @Rpc()
-  @MessagePattern(RPC.NEW_JOB_POST)
-  async sendMailSubsNewJob(payload): Promise<any> {
-    try {
-      return await this.notificationService.sendMailSubscriptionNewJob(payload);
-    } catch (error) {
-      throw new RpcException(error);
-    }
-  }
   @Get('health')
   getHealth() {
     return this.appService.healthCheck();
