@@ -1,19 +1,12 @@
 import { CacheModule, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as redisStore from 'cache-manager-redis-store';
-import { dbConfig, redis } from '../environment/config';
+import { dbConfig } from '../environment/config';
 import { saveJobMiddleware } from '../jobs/middleware/saveJob.middleware';
 import { arrayControllers, arrayEntities, arrayProviders } from './arrayDependency';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    CacheModule.register({
-      store: redisStore,
-      host: redis.host,
-      password: redis.password,
-      port: redis.port,
-    }),
     TypeOrmModule.forRoot({
       type: dbConfig.type,
       host: dbConfig.host,
