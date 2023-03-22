@@ -21,7 +21,7 @@ export class JobberWockyService {
       console.log({ url });
       console.log({ jobsFinded: jobsFinded.data });
 
-      //  return { status: httpCodes.created201, data: jobsFinded };
+      return { status: httpCodes.created201, data: jobsFinded.data };
     } catch (error) {
       throw new HttpException(
         {
