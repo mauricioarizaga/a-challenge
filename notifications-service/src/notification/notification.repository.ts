@@ -1,12 +1,10 @@
 import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { catchError, timeout } from 'rxjs/operators';
-import { SubscriptionJobs } from './entity/index';
+import { SubscriptionJobs } from '../entity/index';
 import { sendEmailGoogle } from './utils/mail';
 
 @Injectable()
 export class NotificationRepository {
-  constructor(private readonly logger: Logger, @Inject('jobs-service') private readonly jobsService: ClientProxy) {}
+  constructor(private readonly logger: Logger) {}
 
   async sendMail(payload): Promise<any> {
     try {
@@ -30,17 +28,5 @@ export class NotificationRepository {
     } catch (error) {
       throw new HttpException(error, error?.statusCode || 500);
     }
-  }
-
-  async connectUserService(pattern: string, data, msResponse: number) {
-    const resultConnection = this.jobsService.send(pattern, data)
-      .pipe(timeout(msResponse))
-      .pipe(
-        catchError((error) => {
-          throw new HttpException(error, error?.response?.statusCode || 500);
-        })
-      )
-      .toPromise();
-    return resultConnection;
   }
 }

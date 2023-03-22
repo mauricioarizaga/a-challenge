@@ -1,16 +1,10 @@
 import { Inject, Logger, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { cronTimes } from '../environment/config';
-import { EventService } from '../event/event.service';
-import { RedisRepository } from '../redis/redis.repository';
 
 @Injectable()
 export class CronService {
-  constructor(
-    @Inject(Logger) private readonly logger: Logger,
-    private eventService: EventService,
-    private redisRepository: RedisRepository,
-  ) {}
+  constructor(@Inject(Logger) private readonly logger: Logger) {}
 
   @Cron(cronTimes.startJob)
   async sendMailNewJobs(data) {

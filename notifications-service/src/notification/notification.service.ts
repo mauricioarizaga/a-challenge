@@ -2,13 +2,14 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { endOfDay, endOfYesterday, format, formatISO, startOfDay, startOfYesterday } from 'date-fns';
 import { Between, FindManyOptions } from 'typeorm';
 import { RPC } from '../constants/rpc';
-import { Jobs } from './entity/Jobs';
+import { Jobs } from '../entity/Jobs';
+import { JobsRepository } from '../jobs/jobs.repository';
 import { NotificationRepository } from './notification.repository';
 import { convertYYYYMMDDToDate } from './utils/date';
 
 @Injectable()
 export class NotificationService {
-  constructor(private readonly notificationRepository: NotificationRepository) {}
+  constructor(private readonly notificationRepository: NotificationRepository, private jobsRepository: JobsRepository) {}
 
   async sendMailSubscriptionNewJob(data): Promise<any> {
     try {
@@ -19,7 +20,8 @@ export class NotificationService {
   }
   async saveSubscriber(email: string) {
     try {
-      this.getJobs();
+      const jobs = await this.getJobs();
+      console.log(jobs);
       return await this.notificationRepository.saveNewsLetter(email);
     } catch (error) {
       throw new HttpException(error, error?.statusCode || 500);
@@ -42,6 +44,6 @@ export class NotificationService {
         createdAt: Between(allStartDate, allEndDate),
       },
     };
-    return await this.notificationRepository.connectUserService(RPC.GET_NEW_POST_JOB, findArg, 10000);
+    return await this.jobsRepository.findJob(findArg);
   }
 }

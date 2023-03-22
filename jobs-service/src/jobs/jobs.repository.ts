@@ -1,6 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, timeout } from 'rxjs/operators';
+import { FindManyOptions } from 'typeorm';
 import { httpCodes } from '../constants/responseCodes';
 import { Jobs } from './entity';
 
@@ -15,10 +16,10 @@ export class JobsRepository {
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
     }
   }
-  async findJob(queryData) {
+  async findJob(findArgs: FindManyOptions<Jobs>) {
     try {
-      console.log({ query: queryData });
-      return await Jobs.find(queryData);
+      console.log({ query: findArgs });
+      return await Jobs.find(findArgs);
     } catch (error) {
       console.log({ error });
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
