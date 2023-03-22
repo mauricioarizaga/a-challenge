@@ -1,19 +1,20 @@
 import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
-import { SubscriptionJobs } from '../entity/index';
+import { Jobs, SubscriptionJobs } from '../entity/index';
+import { mailerSetup } from '../environment/config';
+import { subscriptionEmailNewPost } from './templates/subscriptionNewPosts';
 import { sendEmailGoogle } from './utils/mail';
 
 @Injectable()
 export class NotificationRepository {
   constructor(private readonly logger: Logger) {}
 
-  async sendMail(payload): Promise<any> {
+  async sendMail(email, jobs: Jobs[]) {
     try {
-      this.logger;
       const msg = {
-        from: 'marizaga@gmail.com',
-        to: 'mauricioarizaga@hotmail.com',
-        subject: 'Plain Text Email ✔',
-        text: 'Welcome NestJS Email Sending Tutorial',
+        from: mailerSetup.auth.user,
+        to: email,
+        subject: 'Look at the new jobs posts',
+        html: subscriptionEmailNewPost(jobs),
       };
       const response = await sendEmailGoogle(msg);
       return response;
@@ -21,10 +22,19 @@ export class NotificationRepository {
       throw new HttpException(error, error?.statusCode || 500);
     }
   }
+
   async saveNewsLetter(email: string) {
     try {
       const response = await SubscriptionJobs.save({ email });
       return response;
+    } catch (error) {
+      throw new HttpException(error, error?.statusCode || 500);
+    }
+  }
+
+  async getEmails(queryData) {
+    try {
+      return await SubscriptionJobs.find(queryData);
     } catch (error) {
       throw new HttpException(error, error?.statusCode || 500);
     }

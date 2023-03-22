@@ -62,19 +62,6 @@ services:
       options:
         max-size: "50m"
         max-file: "3"
-  redis:
-    image: "bitnami/redis:latest"
-    environment:
-      - REDIS_PASSWORD=mauricio
-      - REDIS_PORT_NUMBER=7000
-      - REDIS_AOF_ENABLED=no
-    command: /opt/bitnami/scripts/redis/run.sh --maxmemory 50mb
-    ports:
-      - "7000:7000"
-    networks:
-      avature-jobs-network:
-        aliases:
-          - redis-service
 networks:
   avature-jobs-network:
     driver: bridge

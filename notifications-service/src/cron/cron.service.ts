@@ -5,18 +5,33 @@ import { FindManyOptions, Between } from 'typeorm';
 import { Jobs } from '../entity';
 import { cronTimes } from '../environment/config';
 import { JobsRepository } from '../jobs/jobs.repository';
+import { NotificationRepository } from '../notification/notification.repository';
 import { convertYYYYMMDDToDate } from '../notification/utils/date';
 
 @Injectable()
 export class CronService {
-  constructor(@Inject(Logger) private readonly logger: Logger, private jobsRepository: JobsRepository) {}
+  constructor(
+    @Inject(Logger) private readonly logger: Logger,
+    private jobsRepository: JobsRepository,
+    private subscriptionRepository: NotificationRepository,
+  ) {}
 
   @Cron(cronTimes.startJob)
-  async sendMailNewJobs(data) {
+  async sendMailNewJobs() {
     try {
       this.logger.log({ value: { message: 'Emails Sent', error: false } });
-      const jobs = await this.getJobs();
-      return;
+      const emails = await this.getEmails();
+      if (emails.length > 0) {
+        const jobs = await this.getJobs();
+        if (jobs.length > 0) {
+          const sentMail = emails.map(async (email) => {
+            return await this.subscriptionRepository.sendMail(email, jobs);
+          });
+          return await Promise.all(sentMail);
+        }
+        return { error: false, message: 'There are not news jobs post to sent' };
+      }
+      return { error: false, message: 'There are not subscriptions to NewsLetter' };
     } catch (error) {
       throw new HttpException(
         {
@@ -28,21 +43,40 @@ export class CronService {
     }
   }
   async getJobs() {
-    const dateNew = format(new Date(), 'yyyyMMdd');
-    const allStartDate = startOfDay(convertYYYYMMDDToDate(dateNew));
-    const allEndDate = endOfDay(convertYYYYMMDDToDate(dateNew));
+    try {
+      const dateNew = format(new Date(), 'yyyyMMdd');
+      const allStartDate = startOfDay(convertYYYYMMDDToDate(dateNew));
+      const allEndDate = endOfDay(convertYYYYMMDDToDate(dateNew));
 
-    const findArg: FindManyOptions<Jobs> = {
-      where: {
-        createdAt: Between(allStartDate, allEndDate),
-      },
-    };
-    console.log(allEndDate, allStartDate, dateNew);
-    const queryData = {
-      where: {
-        createdAt: Between(allStartDate, allEndDate),
-      },
-    };
-    return await this.jobsRepository.findJob(findArg);
+      const findArg: FindManyOptions<Jobs> = {
+        where: {
+          createdAt: Between(allStartDate, allEndDate),
+        },
+      };
+      return await this.jobsRepository.findJob(findArg);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async getEmails() {
+    try {
+      const queryData = { select: { email: true } };
+      return await this.subscriptionRepository.getEmails(queryData);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

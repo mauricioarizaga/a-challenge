@@ -1,10 +1,9 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
-import * as redisStore from 'cache-manager-redis-store';
-import { dbConfig, mailerSetup, redis } from '../environment/config';
+import { dbConfig, mailerSetup } from '../environment/config';
 import { arrayControllers, arrayEntities, arrayProviders } from './arrayDependency';
 @Module({
   imports: [
@@ -29,12 +28,6 @@ import { arrayControllers, arrayEntities, arrayProviders } from './arrayDependen
       logging: dbConfig.logging === 'true' ? true : false,
     }),
     TypeOrmModule.forFeature(arrayEntities),
-    CacheModule.register({
-      store: redisStore,
-      host: redis.host,
-      password: redis.password,
-      port: redis.port,
-    }),
   ],
 
   controllers: arrayControllers,

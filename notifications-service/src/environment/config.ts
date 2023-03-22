@@ -76,36 +76,6 @@ export const dbConfig = {
   logging: process.env.DB_LOG,
 };
 
-export const kafkaConnect = {
-  server: process.env.KAFKA_SERVER.split(','),
-  topic: process.env.KAFKA_TOPIC,
-  name: 'KAFKA',
-  groupId: process.env.KAFKA_GROUP_ID,
-};
-
 export const cronTimes = {
   startJob: process.env.CRON_SENT_MAIL_TIMER,
-};
-
-export const aws = {
-  region: process.env.AWS_REGION,
-};
-
-export const sns = {
-  Protocol: 'http',
-  TopicArn: process.env.SNS_ARN,
-  Endpoint: process.env.SNS_ENDPOINT,
-};
-
-export const sqs = {
-  messageGroupId: process.env.MESSAGE_GROUP_ID,
-  delay: process.env.DELAY,
-  sqsUrl: process.env.SQS_URL,
-};
-
-export const redis = {
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-  port: Number(process.env.REDIS_PORT),
-  ttl: Number(process.env.REDIS_TTL),
 };

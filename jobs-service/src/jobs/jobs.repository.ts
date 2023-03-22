@@ -18,10 +18,8 @@ export class JobsRepository {
   }
   async findJob(findArgs: FindManyOptions<Jobs>) {
     try {
-      console.log({ query: findArgs });
       return await Jobs.find(findArgs);
     } catch (error) {
-      console.log({ error });
       throw new HttpException(error, error?.statusCode || httpCodes.error500);
     }
   }
