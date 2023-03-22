@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { httpCodes } from '../constants/responseCodes';
-import { jobberWocky } from '../environment/config';
 import { JobberWockyRepository } from './jobber.repository';
 import { getUrl } from './utils/url';
 
