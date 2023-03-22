@@ -22,6 +22,6 @@ export class Jobs extends BaseEntity {
   skills: string[];
 
   @Index()
-  @Column('timestamp without time zone')
+  @CreateDateColumn()
   createdAt: Date;
 }

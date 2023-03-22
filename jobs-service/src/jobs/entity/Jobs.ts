@@ -1,4 +1,4 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn, BaseEntity, CreateDateColumn, Timestamp } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn, BaseEntity, CreateDateColumn } from 'typeorm';
 
 @Entity('jobs', { schema: 'public' })
 export class Jobs extends BaseEntity {
@@ -22,6 +22,6 @@ export class Jobs extends BaseEntity {
   skills: string[];
 
   @Index()
-  @Column('timestamp without time zone')
+  @CreateDateColumn()
   createdAt: Date;
 }
