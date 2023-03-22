@@ -13,3 +13,15 @@ export const NotificationServiceProxy = {
       },
     }),
 };
+export const JobberServiceProxy = {
+  provide: 'jobberWocky-integration-service',
+  inject: [ConfigService],
+  useFactory: (configService: ConfigService) =>
+    ClientProxyFactory.create({
+      transport: Transport.TCP,
+      options: {
+        host: configService.get('JOB_WOCKY_INTEGRATION_HOST'),
+        port: configService.get('JOB_WOCKY_INTEGRATION_PORT'),
+      },
+    }),
+};

@@ -1,5 +1,8 @@
 import { Controller, Get, HttpException, HttpStatus, Inject, Logger, Query } from '@nestjs/common';
+import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { ApiQuery } from '@nestjs/swagger';
+import { RPC } from '../constants/rpc';
+import { Rpc } from '../decorators/rpc.decorator';
 import { AppService } from '../nestConfig/app.service';
 import { SearchJobDTO } from './dto/job.dto';
 import { JobberWockyService } from './jobber.service';
@@ -30,6 +33,22 @@ export class JobberWockyController {
         },
         HttpStatus.BAD_REQUEST
       );
+    }
+  }
+
+  @Rpc()
+  @MessagePattern(RPC.GET_JOBS_FROM_WOCKY)
+  async getJobsProxy(payload) {
+    try {
+      this.logger.log({
+        message: 'Get Jobs Wocky Proxy Controller ',
+        payload,
+        error: false,
+      });
+      const { name, salary_min, salary_max, country } = payload;
+      return await this.jobberService.getJobs(name, salary_min, salary_max, country);
+    } catch (err) {
+      throw new RpcException(err);
     }
   }
 

@@ -8,7 +8,7 @@ import * as winston from 'winston';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
-      defaultMeta: { service: 'Avature MS: Notification' },
+      defaultMeta: { service: 'Avature MS: Jobs' },
       format: winston.format.json(),
       transports: [
         new winston.transports.Console({
