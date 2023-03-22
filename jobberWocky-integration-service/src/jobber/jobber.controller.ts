@@ -1,4 +1,5 @@
-import { Controller, Get, HttpException, Inject, Logger, Query } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Inject, Logger, Query } from '@nestjs/common';
+import { ApiQuery } from '@nestjs/swagger';
 import { AppService } from '../nestConfig/app.service';
 import { SearchJobDTO } from './dto/job.dto';
 import { JobberWockyService } from './jobber.service';
@@ -8,6 +9,10 @@ export class JobberWockyController {
   constructor(@Inject(Logger) private readonly logger: Logger, private jobberService: JobberWockyService, private appService: AppService) {}
 
   @Get()
+  @ApiQuery({ name: 'name', type: String, required: false })
+  @ApiQuery({ name: 'salary_min', type: Number, required: false })
+  @ApiQuery({ name: 'country', type: String, required: false })
+  @ApiQuery({ name: 'salary_max', type: Number, required: false })
   async getJobs(@Query() query: SearchJobDTO) {
     try {
       this.logger.log({
@@ -18,9 +23,16 @@ export class JobberWockyController {
       const { name, salary_min, salary_max, country } = query;
       return await this.jobberService.getJobs(name, salary_min, salary_max, country);
     } catch (error) {
-      throw new HttpException(error, error?.response?.statusCode || 500);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
+
   @Get('health')
   getHealth() {
     return this.appService.healthCheck();
