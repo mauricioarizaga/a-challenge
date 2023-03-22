@@ -10,24 +10,21 @@ import { convertYYYYMMDDToDate } from '../notification/utils/date';
 
 @Injectable()
 export class CronService {
-  constructor(
-    @Inject(Logger) private readonly logger: Logger,
-    private jobsRepository: JobsRepository,
-    private subscriptionRepository: NotificationRepository,
-  ) {}
+  constructor(private jobsRepository: JobsRepository, private subscriptionRepository: NotificationRepository) {}
 
   @Cron(cronTimes.startJob)
   async sendMailNewJobs() {
     try {
-      this.logger.log({ value: { message: 'Emails Sent', error: false } });
       const emails = await this.getEmails();
       if (emails.length > 0) {
         const jobs = await this.getJobs();
         if (jobs.length > 0) {
-          const sentMail = emails.map(async (email) => {
+          const sentMail = emails.map(async (emailSubscriber) => {
+            const { email } = emailSubscriber;
             return await this.subscriptionRepository.sendMail(email, jobs);
           });
-          return await Promise.all(sentMail);
+          const resolve = await Promise.all(sentMail);
+          return resolve;
         }
         return { error: false, message: 'There are not news jobs post to sent' };
       }

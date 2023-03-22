@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { Jobs, SubscriptionJobs } from '../entity/index';
 import { mailerSetup } from '../environment/config';
 import { subscriptionEmailNewPost } from './templates/subscriptionNewPosts';
@@ -6,7 +6,7 @@ import { sendEmailGoogle } from './utils/mail';
 
 @Injectable()
 export class NotificationRepository {
-  constructor(private readonly logger: Logger) {}
+  constructor() {}
 
   async sendMail(email, jobs: Jobs[]) {
     try {
@@ -19,7 +19,13 @@ export class NotificationRepository {
       const response = await sendEmailGoogle(msg);
       return response;
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || 500);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -28,7 +34,13 @@ export class NotificationRepository {
       const response = await SubscriptionJobs.save({ email });
       return response;
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || 500);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -36,7 +48,13 @@ export class NotificationRepository {
     try {
       return await SubscriptionJobs.find(queryData);
     } catch (error) {
-      throw new HttpException(error, error?.statusCode || 500);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }
