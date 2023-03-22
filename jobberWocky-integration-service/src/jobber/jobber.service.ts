@@ -18,10 +18,14 @@ export class JobberWockyService {
       });
       const url = getUrl(name, salary_max, salary_min, country);
       const jobsFinded = await this.jobberWockyRepository.findJobsByParams(url);
-      console.log({ url });
-      console.log({ jobsFinded: jobsFinded.data });
-
-      return { status: httpCodes.created201, data: jobsFinded.data };
+      if (jobsFinded.data.length > 0) {
+        const result = jobsFinded.data.map((job) => {
+          const [name, salary, country, skills] = job;
+          return { name, salary, country, skills };
+        });
+        return { status: httpCodes.ok200, data: result };
+      }
+      return { status: httpCodes.notFound404, data: jobsFinded.data };
     } catch (error) {
       throw new HttpException(
         {

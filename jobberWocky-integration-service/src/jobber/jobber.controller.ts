@@ -16,7 +16,6 @@ export class JobberWockyController {
         error: false,
       });
       const { name, salary_min, salary_max, country } = query;
-      console.log(query);
       return await this.jobberService.getJobs(name, salary_min, salary_max, country);
     } catch (error) {
       throw new HttpException(error, error?.response?.statusCode || 500);
