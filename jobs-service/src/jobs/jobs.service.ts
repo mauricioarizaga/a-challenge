@@ -54,7 +54,6 @@ export class JobsService {
       }
 
       const jobsJobber = await this.searchJobber(payloadJobber);
-      console.log({ jobsJobber: jobsJobber.data });
       if (jobsJobber.data.length > 0) {
         resultJobs = [...jobsJobber.data];
       }
