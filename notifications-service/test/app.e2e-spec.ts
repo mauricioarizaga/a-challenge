@@ -1,15 +1,15 @@
-import { JobsController } from '../src/jobs/jobs.controller';
+import { NotificationController } from '../src/notification/notification.controller';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from '../src/nestConfig/app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbConfig } from '../src/environment/config';
 import { arrayControllers, arrayEntities, arrayProviders } from '../src/nestConfig/arrayDependency';
-import { newPostJob } from './seeds/db';
+import { email } from './seeds/db';
 
 describe('Check if Jobs controller works correctly ', () => {
   let service: AppService;
-  let jobsController: JobsController;
+  let notificationController: NotificationController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,21 +33,19 @@ describe('Check if Jobs controller works correctly ', () => {
     }).compile();
 
     service = module.get<AppService>(AppService);
-    jobsController = module.get<JobsController>(JobsController);
+    notificationController = module.get<NotificationController>(NotificationController);
   });
 
   it('Check if app service is defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('Test if saveJob method works', async () => {
-    expect(await jobsController.saveJob(newPostJob)).not.toEqual(null);
+  it('Test if saveEmailSubscriber method works', async () => {
+    expect(await notificationController.saveEmailSubscriber(email)).not.toEqual(null);
   });
-  it('Test if saveJob response 201', async () => {
-    const result = await jobsController.saveJob(newPostJob);
-    const { data } = result;
-    expect(result).toHaveProperty('status');
-    expect(result).toHaveProperty('data');
-    expect(typeof data).toEqual('object');
+  it('Test if saveEmailSubscriber response 201', async () => {
+    const result = await notificationController.saveEmailSubscriber(email);
+    expect(result).toHaveProperty('email');
+    expect(result).toHaveProperty('id');
   });
 });
